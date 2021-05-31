@@ -1,23 +1,30 @@
+// Set Up
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
+const { User } = require("../../models");
 
-const users = []
 
-router.get('/', (req, res) => {
-    res.status(200)
-    res.json(users)
+router.get('/', async (req, res) => {
+    try {
+        const userData = await User.findAll({});
+        res.status(200);
+        res.json(userData)
+    } catch (error) {
+        res.status(500);
+        res.send(error);
+    }
 })
 router.post('/', async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10)
-        const newUser = {
+        const newUser = await User.create({
             username: req.body.username,
+            email: req.body.email,
             password: hashedPassword
-        }
-        users.push(newUser)
+        })
         res.status(200)
-        res.json({ message: "User created" })
+        res.json(newUser)
     } catch (err) {
         res.status(500)
         res.json(err)
@@ -25,22 +32,34 @@ router.post('/', async (req, res) => {
 
 })
 
-router.post('/login', async (req, res) => {
-    const user = users.find(user => user.username === req.body.username)
-    if (user == null) {
-        return res.status(400).json({ message: "User Not Found" })
+router.post('/login', async ({body}, res) => {
+    // Check if email and password are both in the body
+    if(!body.email || !body.password) {
+        res.status(400)
+        res.json({message: "Email and Password are Required"})
+        return
     }
     try {
-        if(await bcrypt.compare(req.body.password, user.password)) {
+        const user = await User.findOne({
+            where: {
+                email: body.email
+            }
+        })
+        if (user == null) {
+            return res.status(400).json({ message: "User Not Found" })
+        }
+        if (await bcrypt.compare(body.password, user.password)) {
             res.status(200)
-            res.json({message: "User Logged In"})
+            res.json({ message: "User Logged In" })
         } else {
             res.status(401)
-            res.json({message: "Not Allowed"})
+            res.json({ message: "Not Allowed" })
         }
-    } catch (err) {
-        res.status(500)
-        res.json(err)
+
+    } catch (error) {
+        console.log(error);
+        res.status(400)
+        res.send(error)
     }
 })
 
