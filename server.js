@@ -32,6 +32,25 @@ app.post('/users', async (req, res) => {
 
 })
 
+app.post('/users/login', async (req, res) => {
+    const user = users.find(user => user.username === req.body.username)
+    if (user == null) {
+        return res.status(400).json({ message: "User Not Found" })
+    }
+    try {
+        if(await bcrypt.compare(req.body.password, user.password)) {
+            res.status(200)
+            res.json({message: "User Logged In"})
+        } else {
+            res.status(401)
+            res.json({message: "Not Allowed"})
+        }
+    } catch (err) {
+        res.status(500)
+        res.json(err)
+    }
+})
+
 app.listen(PORT, () => {
     console.log("Express App listening at http://localhost:" + PORT);
 })
