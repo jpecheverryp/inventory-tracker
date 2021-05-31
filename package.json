@@ -9,6 +9,7 @@
   "author": "Juan P Echeverry",
   "license": "MIT",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "express": "^4.17.1"
   },
   "devDependencies": {
