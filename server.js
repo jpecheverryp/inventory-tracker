@@ -2,7 +2,7 @@
 const express = require("express");
 const app = express();
 const routes = require("./routes")
-const PORT = 3000;
+const PORT = 5000;
 const sequelize = require("./config/sequelize");
 
 const { User } = require("./models")
