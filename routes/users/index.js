@@ -32,29 +32,31 @@ router.post('/', async (req, res) => {
 
 })
 
-router.post('/login', async ({body}, res) => {
+router.post('/login', async ({ body }, res) => {
     // Check if email and password are both in the body
-    if(!body.email || !body.password) {
+    if (!body.email || !body.password) {
         res.status(400)
-        res.json({message: "Email and Password are Required"})
+        res.json({ message: "Email and Password are Required" })
         return
     }
     try {
+        // Find specific user by email
         const user = await User.findOne({
             where: {
                 email: body.email
             }
         })
+        // If user does not exist in database return 400
         if (user == null) {
             return res.status(400).json({ message: "User Not Found" })
         }
-        if (await bcrypt.compare(body.password, user.password)) {
-            res.status(200)
-            res.json({ message: "User Logged In" })
-        } else {
-            res.status(401)
-            res.json({ message: "Not Allowed" })
+        // If password does not match return 401
+        if (!(await bcrypt.compare(body.password, user.password))) {
+            return res.status(401).json({ message: "Not Allowed" })
         }
+        // If user passes every check authenticate
+        res.status(200)
+        res.json({ message: "User Logged In" })
 
     } catch (error) {
         console.log(error);

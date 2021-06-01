@@ -6,7 +6,7 @@ const PORT = 5000;
 const sequelize = require("./config/sequelize");
 
 const { User } = require("./models")
-// Configuration
+// Middleware
 app.use(express.json())
 
 // Routes
