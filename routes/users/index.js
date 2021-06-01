@@ -41,9 +41,7 @@ router.post('/', async (req, res) => {
 
 // Create token
 router.post('/token', (req, res) => {
-    console.log('here');
     const refreshToken = req.body.token
-    console.log(refreshToken);
     // Checks if refresh token was sent
     if(refreshToken == null) return res.sendStatus(401);
     if(!refreshTokens.includes(refreshToken)) return res.sendStatus(403);
@@ -80,7 +78,6 @@ router.post('/login', async ({ body }, res) => {
         const userPayload = {
             userId: user.id
         }
-        console.log(userPayload);
         const accessToken = generateAccessToken(userPayload)
         const refreshToken = generateRefreshToken(userPayload)
         refreshTokens.push(refreshToken);

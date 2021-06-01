@@ -1,8 +1,12 @@
 import React from "react";
 
-function Dashboard() {
+function Dashboard(props) {
     return (
-        <h1>Dashboard!!</h1>
+        <div>
+            <h1>Dashboard!!</h1>
+            <p>Hello USER: {props.user.username}</p>
+            <p>Access Token: {props.accessToken}</p>
+        </div>
     )
 }
 

@@ -1,6 +1,8 @@
 import { React, useState } from "react"
 
-function Login() {
+function Login(props) {
+
+    const handleAccessToken = props.handleAccessToken
 
     const [loginState, setLoginState] = useState({
         email: '',
@@ -22,7 +24,14 @@ function Login() {
             body: JSON.stringify(loginState)
         })
             .then(res => res.json())
-            .then(data => console.log(data))
+            .then(data => {
+                console.log(data);
+                // Handle SUCCESFULL LOGIN HERE
+                // data contains accesstoken, refreshtoken
+                const {refreshToken, accessToken} = data
+                document.cookie = `refreshToken=${refreshToken}`
+                handleAccessToken(accessToken)
+            })
             .catch(err => console.log(err))
     }
     const changeHandler = (e) => {
