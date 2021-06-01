@@ -42,6 +42,7 @@ function Signup() {
                         onChange={(e) => changeHandler(e)}
                         id="username"
                         name="username"
+                        autoComplete="username"
                         type="text" />
                 </label>
                 <br />
@@ -50,6 +51,7 @@ function Signup() {
                         onChange={(e) => changeHandler(e)}
                         id="email"
                         name="email"
+                        autoComplete="email"
                         type="text" />
                 </label>
                 <br />
@@ -58,6 +60,7 @@ function Signup() {
                         onChange={(e) => changeHandler(e)}
                         type="password"
                         name="password"
+                        autoComplete="current-password"
                         id="password" />
                 </label>
                 <br />

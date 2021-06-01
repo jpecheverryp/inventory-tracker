@@ -38,6 +38,7 @@ function Login() {
                 <label htmlFor="email">
                     Email: <input
                         onChange={(e) => changeHandler(e)}
+                        autoComplete="email"
                         id="email"
                         name="email"
                         type="email" />
@@ -46,6 +47,7 @@ function Login() {
                 <label htmlFor="password">
                     Password: <input
                         onChange={(e) => changeHandler(e)}
+                        autoComplete="current-password"
                         type="password"
                         name="password"
                         id="password" />
