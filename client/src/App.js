@@ -1,21 +1,45 @@
-import { React, useState, useEffect } from 'react'
+import { React } from 'react'
+import {
+  BrowserRouter as Router,
+  Route,
+  Link,
+  Switch
+} from "react-router-dom";
 import './App.css';
-import Users from './components/users';
+
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
 
-  const [users, setUsers] = useState([])
-
-  useEffect(() => {
-    fetch('/users')
-    .then(res => res.json())
-    .then(data => setUsers(data))
-  }, [])
-
   return (
-    <>
-    <Users users={users} />
-    </>
+    <Router>
+      <div>
+        <ul>
+          <li><Link to="/">Home</Link></li>
+          <li><Link to="/login">Login</Link></li>
+          <li><Link to="/signup">Sign Up</Link></li>
+          <li><Link to="/dashboard">Dashboard</Link></li>
+        </ul>
+      </div>
+      <Switch>
+        <Route exact path='/'>
+          <Home />
+        </Route>
+        <Route path="/login">
+          <Login />
+        </Route>
+        <Route path="/signup">
+          <Signup />
+        </Route>
+        <Route path="/dashboard">
+          <Dashboard />
+        </Route>
+      </Switch>
+    </Router>
+
   );
 }
 
