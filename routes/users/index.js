@@ -2,8 +2,15 @@
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
+const jwt = require('jsonwebtoken');
 const { User } = require("../../models");
+const {
+    authenticateToken,
+    generateAccessToken,
+    generateRefreshToken
+} = require("../../utils/auth")
 
+let refreshTokens = []
 
 router.get('/', async (req, res) => {
     try {
@@ -32,6 +39,21 @@ router.post('/', async (req, res) => {
 
 })
 
+// Create token
+router.post('/token', (req, res) => {
+    console.log('here');
+    const refreshToken = req.body.token
+    console.log(refreshToken);
+    // Checks if refresh token was sent
+    if(refreshToken == null) return res.sendStatus(401);
+    if(!refreshTokens.includes(refreshToken)) return res.sendStatus(403);
+    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+        if (err) return res.sendStatus(403)
+        const accessToken = generateAccessToken({userId: user.userId})
+        res.json({accessToken: accessToken})
+    })
+})
+
 router.post('/login', async ({ body }, res) => {
     // Check if email and password are both in the body
     if (!body.email || !body.password) {
@@ -55,14 +77,36 @@ router.post('/login', async ({ body }, res) => {
             return res.status(401).json({ message: "Not Allowed" })
         }
         // If user passes every check authenticate
+        const userPayload = {
+            userId: user.id
+        }
+        console.log(userPayload);
+        const accessToken = generateAccessToken(userPayload)
+        const refreshToken = generateRefreshToken(userPayload)
+        refreshTokens.push(refreshToken);
         res.status(200)
-        res.json({ message: "User Logged In" })
+        res.json({
+            accessToken: accessToken,
+            refreshToken: refreshToken
+        })
 
     } catch (error) {
         console.log(error);
-        res.status(400)
-        res.send(error)
+        res.status(500)
+        res.send('Error in server')
     }
+})
+
+router.get('/userData', authenticateToken, async (req, res) => {
+    const userData = await User.findByPk(req.user.userId)
+    res.status(200)
+    res.json(req.user)
+    // res.json(userData)
+})
+
+router.delete('/logout', (req, res) => {
+    refreshTokens = refreshTokens.filter(token => token !== req.body.token)
+    res.sendStatus(204);
 })
 
 module.exports = router
